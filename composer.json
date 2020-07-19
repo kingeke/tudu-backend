@@ -65,6 +65,9 @@
         ],
         "reseed": [
             "php artisan migrate:fresh"
+        ],
+        "deploy": [
+            "git push && git push heroku master"
         ]
     }
 }

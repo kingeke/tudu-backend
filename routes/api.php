@@ -15,8 +15,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return response()->json([
-        'status'  => 'online',
-        'version' => '1.0',
+        'status'  => 'success',
+        'message' => 'Welcome to our API, please use the api doc to get started',
+        'api-doc' => 'https://documenter.getpostman.com/view/4827230/T1DjkzZN?version=latest',
     ]);
 });
 
