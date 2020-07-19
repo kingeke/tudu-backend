@@ -2,9 +2,10 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Validation\ValidationException;
-use Illuminate\Auth\AuthenticationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -55,9 +56,13 @@ class Handler extends ExceptionHandler
         if ($exception instanceof ValidationException) {
             return messageResponse('error', $exception->validator->messages()->first(), 422);
         }
-        
-        if($exception instanceof AuthenticationException){
+
+        if ($exception instanceof AuthenticationException) {
             return messageResponse('error', 'You are unauthenticated, please login.', 401);
+        }
+
+        if ($exception instanceof ModelNotFoundException && !$request->has('_token')) {
+            return messageResponse('error', "The resource {$exception->getModel()} does not exist", 400);
         }
 
         return parent::render($request, $exception);
