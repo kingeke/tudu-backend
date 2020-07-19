@@ -3,6 +3,7 @@
 This app is a manage your todos.
 You can view a demo here [Demo](https://tudu-app-frontend.herokuapp.com/)
 Api hosted there [API](https://tudu-app-backend.herokuapp.com/api)
+API Docs [here](https://documenter.getpostman.com/view/4827230/T1DjkzZN)
 
 ## Features
 

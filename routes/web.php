@@ -11,8 +11,12 @@ use Illuminate\Support\Facades\Route;
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 
 Route::get('/', function () {
-    return view('welcome');
+    return response()->json([
+        'status'  => 'success',
+        'message' => 'Welcome to our API, please use the api doc to get started',
+        'api-doc' => 'https://documenter.getpostman.com/view/4827230/T1DjkzZN?version=latest',
+    ]);
 });
