@@ -12,19 +12,22 @@ class TodoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
-    }
+        $todos = auth()->user()->todos();
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        if ($request->unfulfilled == 'true') {
+            $todos = $todos->where('completed', false);
+        }
+
+        if ($request->completed == 'true') {
+            $todos = $todos->where('completed', true);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'todos'  => $todos->latest()->get(),
+        ]);
     }
 
     /**
@@ -35,7 +38,13 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required',
+        ]);
+
+        auth()->user()->todos()->create($validated);
+
+        return messageResponse('success', 'Todo item created successfully.');
     }
 
     /**
@@ -46,18 +55,10 @@ class TodoController extends Controller
      */
     public function show(Todo $todo)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Todo  $todo
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Todo $todo)
-    {
-        //
+        return response()->json([
+            'status' => 'success',
+            'todo'   => $todo,
+        ]);
     }
 
     /**
@@ -69,7 +70,29 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $todo)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required',
+        ]);
+
+        $todo->update($validated);
+
+        return messageResponse('success', 'Todo item updated successfully.');
+    }
+
+    /**
+     * Mark todo as completed
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Todo  $todo
+     * @return \Illuminate\Http\Response
+     */
+    public function complete(Todo $todo)
+    {
+        $todo->update([
+            'completed' => true,
+        ]);
+
+        return messageResponse('success', 'Todo item completed successfully.');
     }
 
     /**
@@ -80,6 +103,12 @@ class TodoController extends Controller
      */
     public function destroy(Todo $todo)
     {
-        //
+        if (!$todo->completed) {
+            return messageResponse('error', 'Todo item not completed yet.', 400);
+        }
+
+        $todo->delete();
+
+        return messageResponse('success', 'Todo item deleted successfully.');
     }
 }

@@ -3,6 +3,8 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Auth\AuthenticationException;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -50,6 +52,14 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
+        if ($exception instanceof ValidationException) {
+            return messageResponse('error', $exception->validator->messages()->first(), 422);
+        }
+        
+        if($exception instanceof AuthenticationException){
+            return messageResponse('error', 'You are unauthenticated, please login.', 401);
+        }
+
         return parent::render($request, $exception);
     }
 }
